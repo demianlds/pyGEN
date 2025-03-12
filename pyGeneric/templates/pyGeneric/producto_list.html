@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Productos</title>
+    <!-- Agregamos Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <h1 class="text-center text-secondary mb-4">PyGen</h1>
+        <div class="text-center mb-4">
+            <!-- Botones de agregar -->
+            <a href="{% url 'producto_crear' %}" class="btn btn-success">Agregar Producto</a>
+            <a href="{% url 'categoria_crear' %}" class="btn btn-warning">Agregar Categoría</a>
+            <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#filterModal">Filtrar por Categoría</a>
+        </div>
+
+        <!-- Modal para seleccionar categoría -->
+        <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="filterModalLabel">Filtrar por Categoría</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="get" action="{% url 'productos_lista' %}">
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Selecciona una categoría:</label>
+                                <select name="category" id="category" class="form-select">
+                                    <option value="">Todas las categorías</option>
+                                    {% for categoria in categorias %}
+                                        <option value="{{ categoria.id }}">
+                                            {{ categoria.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Aplicar Filtro</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ul class="list-group">
+            {% for product in object_list %}
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ product.name }}</strong> 
+                            <span class="badge bg-secondary ms-2">Stock: {{ product.actual_stock }}</span> 
+                            <span class="badge bg-info text-dark ms-2">{{ product.category }}</span>
+                        </div>
+                        <div>
+                            <a href="{% url 'movimiento_crear' product.id %}" class="btn btn-outline-primary btn-sm me-2">Registrar Movimiento</a>
+                            <!-- Botón para mostrar/ocultar movimientos -->
+                            <button class="btn btn-outline-secondary btn-sm" onclick="toggleMovimientos({{ product.id }})">
+                                Ver Movimientos
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Movimientos -->
+                    <div class="movimientos mt-3" id="movimientos-{{ product.id }}" style="display: none;">
+                        <h6>Movimientos:</h6>
+                        <ul class="list-group">
+                            {% for movimiento in product.movimientos.all %}
+                                <li class="list-group-item">
+                                    {{ movimiento.type|title }} - 
+                                    Cantidad: {{ movimiento.amount }} - 
+                                    Fecha: {{ movimiento.data|date:"d/m/Y H:i" }}
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item text-muted">No hay movimientos registrados para este producto.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </li>
+            {% empty %}
+                <li class="list-group-item text-center text-muted">No hay productos disponibles.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Función para alternar la visibilidad de los movimientos
+        function toggleMovimientos(productId) {
+            var movimientosDiv = document.getElementById('movimientos-' + productId);
+            if (movimientosDiv.style.display === 'none' || movimientosDiv.style.display === '') {
+                movimientosDiv.style.display = 'block';  // Muestra los movimientos
+            } else {
+                movimientosDiv.style.display = 'none';   // Oculta los movimientos
+            }
+        }
+    </script>
+</body>
+</html>
