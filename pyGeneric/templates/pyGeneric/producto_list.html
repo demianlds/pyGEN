@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Productos</title>
-    <!-- Agregamos Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body class="bg-light">
     <div class="container py-4">
@@ -32,7 +32,7 @@
                                 <select name="category" id="category" class="form-select">
                                     <option value="">Todas las categorías</option>
                                     {% for categoria in categorias %}
-                                        <option value="{{ categoria.id }}">
+                                        <option value="{{ categoria.id }}" {% if request.GET.category == categoria.id|stringformat:"s" %}selected{% endif %}>
                                             {{ categoria.name }}
                                         </option>
                                     {% endfor %}
@@ -60,6 +60,9 @@
                             <!-- Botón para mostrar/ocultar movimientos -->
                             <button class="btn btn-outline-secondary btn-sm" onclick="toggleMovimientos({{ product.id }})">
                                 Ver Movimientos
+                            </button>
+                            <button class="btn btn-danger delete-btn">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </div>
@@ -98,5 +101,25 @@
             }
         }
     </script>
+
+    <style>
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .delete-btn:hover {
+            background-color: #24090c;
+        }
+
+        .delete-btn i {
+            font-size: 1rem;
+        }
+</style>
 </body>
 </html>

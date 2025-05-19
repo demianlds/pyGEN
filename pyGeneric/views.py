@@ -28,16 +28,14 @@ class CategoriaCreateView(CreateView):
 class ProductoListView(ListView):
     model = Producto
     context_object_name = 'object_list'
-    template_name = 'pyGeneric/producto_list.html'  # Asegúrate de tener este template
+    template_name = 'pyGeneric/producto_list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Obtener todas las categorías
         context['categorias'] = Categoria.objects.all()
-        # Filtrar productos si se ha seleccionado una categoría
-        categoria_id = self.request.GET.get('categoria')
+        categoria_id = self.request.GET.get('category')
         if categoria_id:
-            context['object_list'] = Producto.objects.filter(categoria_id=categoria_id)
+            context['object_list'] = Producto.objects.filter(category_id=categoria_id)
         return context
 
 class ProductoCreateView(CreateView):
