@@ -1,11 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.contrib import messages
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Producto, Movimiento, Categoria
 from .forms import ProductoForm
-from .forms import CategoriaForm
-
 class CategoriaListView(ListView):
     model = Categoria
     context_object_name = 'categorias'
@@ -25,10 +23,13 @@ class CategoriaCreateView(CreateView):
         messages.success(self.request, 'Categoría creada con éxito.')
         return super().form_valid(form)
 
-class ProductoListView(ListView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class ProductoListView(LoginRequiredMixin, ListView):
     model = Producto
     context_object_name = 'object_list'
     template_name = 'pyGeneric/producto_list.html'
+    login_url = 'login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -86,4 +87,9 @@ class MovimientoCreateView(CreateView):
 
         messages.success(self.request, 'Movimiento registrado exitosamente.')
         return super().form_valid(form)
+
+class ProductoDeleteView(DeleteView):
+    model = Producto
+    success_url = reverse_lazy('productos_lista')
+    template_name = 'pyGeneric/producto_list.html'
 
